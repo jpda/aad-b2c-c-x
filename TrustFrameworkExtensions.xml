@@ -25,12 +25,12 @@
       <TechnicalProfiles>
         <TechnicalProfile Id="login-NonInteractive">
           <Metadata>
-            <Item Key="client_id">ProxyIdentityExperienceFrameworkAppId</Item>
-            <Item Key="IdTokenAudience">IdentityExperienceFrameworkAppId</Item>
+            <Item Key="client_id">53970864-922f-41d6-97b6-e8aae01e1f68</Item>
+            <Item Key="IdTokenAudience">26accc65-4bed-4af5-8ed7-88027d193b70</Item>
           </Metadata>
           <InputClaims>
-            <InputClaim ClaimTypeReferenceId="client_id" DefaultValue="ProxyIdentityExperienceFrameworkAppId" />
-            <InputClaim ClaimTypeReferenceId="resource_id" PartnerClaimType="resource" DefaultValue="IdentityExperienceFrameworkAppId" />
+            <InputClaim ClaimTypeReferenceId="client_id" DefaultValue="53970864-922f-41d6-97b6-e8aae01e1f68" />
+            <InputClaim ClaimTypeReferenceId="resource_id" PartnerClaimType="resource" DefaultValue="26accc65-4bed-4af5-8ed7-88027d193b70" />
           </InputClaims>
         </TechnicalProfile>
       </TechnicalProfiles>
@@ -194,7 +194,7 @@
     </UserJourney>
     <!-- end local and social signup flow -->
     <!-- start sign-in flow checking for external MFA -->
-    <UserJourney Id="SignInWithMfa">
+    <UserJourney Id="UnifiedWithMfa">
       <OrchestrationSteps>
         <OrchestrationStep Order="1" Type="CombinedSignInAndSignUp" ContentDefinitionReferenceId="api.signuporsignin">
           <ClaimsProviderSelections>

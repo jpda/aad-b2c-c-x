@@ -9,13 +9,22 @@
   </BasePolicy>
 
   <RelyingParty>
-    <DefaultUserJourney ReferenceId="SignInWithMfa" />
+    <DefaultUserJourney ReferenceId="UnifiedWithMfa" />
     <UserJourneyBehaviors>
       <JourneyInsights TelemetryEngine="ApplicationInsights" InstrumentationKey="93f220bd-1eb3-4661-a587-0d10899d9389" DeveloperMode="true" ClientEnabled="false" ServerEnabled="true" TelemetryVersion="1.0.0" />
     </UserJourneyBehaviors>
     <TechnicalProfile Id="PolicyProfile">
       <DisplayName>PolicyProfile</DisplayName>
       <Protocol Name="OpenIdConnect" />
+      <!-- jpd custom claim -->
+      <InputTokenFormat>JWT</InputTokenFormat>
+      <CryptographicKeys>
+        <Key Id="client_secret" StorageReferenceId="B2C_1A_JwtCustomClaimSigningKey" />
+      </CryptographicKeys>
+      <InputClaims>
+        <InputClaim ClaimTypeReferenceId="extension_AppUserId"/>
+      </InputClaims>
+      <!-- end custom claim -->
       <OutputClaims>
         <OutputClaim ClaimTypeReferenceId="displayName" />
         <OutputClaim ClaimTypeReferenceId="givenName" />
