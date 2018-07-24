@@ -16,6 +16,12 @@
         <UserHelpText>App-specific user id, will be hidden</UserHelpText>
         <UserInputType>Readonly</UserInputType>
       </ClaimType>
+      <ClaimType Id="usersExistWithAppUserId">
+        <DataType>bool</DataType>
+      </ClaimType>
+      <ClaimType Id="UserHasMfaClaimFromUpstreamIdp">
+        <DataType>bool</DataType>
+      </ClaimType>
       <!-- end custom claim-->
     </ClaimsSchema>
   </BuildingBlocks>
@@ -75,6 +81,48 @@
         </TechnicalProfile>
       </TechnicalProfiles>
     </ClaimsProvider>
+    <ClaimsProvider>
+      <DisplayName>UserWithExtensionPropertyExistsAPI</DisplayName>
+      <TechnicalProfiles>
+        <TechnicalProfile Id="AzureFunctions-LookupExistingUsersWithAppUserId">
+          <DisplayName>Query graph for existing users with specific attribute value</DisplayName>
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.RestfulProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+          <Metadata>
+            <Item Key="ServiceUrl">https://graph-checker.azurewebsites.net/api/QueryByAttributeValue?code=</Item>
+            <Item Key="AuthenticationType">None</Item>
+            <Item Key="SendClaimsIn">Body</Item>
+          </Metadata>
+          <InputClaims>
+            <InputClaims ClaimTypeReferenceId="extension_AppUserId" partnerClaimType="AppUserId"/>
+          </InputClaims>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="usersExistWithAppUserId" />
+          </OutputClaims>
+          <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
+        </TechnicalProfile>
+      </TechnicalProfiles>
+    </ClaimsProvider>
+    <ClaimsProvider>
+      <DisplayName>UserHasMfaClaimFromUpstreamIdpAPI</DisplayName>
+      <TechnicalProfiles>
+        <TechnicalProfile Id="AzureFunctions-ParseUserClaimForMfaAtUpstreamIdp">
+          <DisplayName>Use a function to parse the amr claim since we don't have any array indexing or querying natively</DisplayName>
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.RestfulProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+          <Metadata>
+            <Item Key="ServiceUrl">https://graph-checker.azurewebsites.net/api/UserHasMfaClaim?code=</Item>
+            <Item Key="AuthenticationType">None</Item>
+            <Item Key="SendClaimsIn">Body</Item>
+          </Metadata>
+          <InputClaims>
+            <InputClaims ClaimTypeReferenceId="PassthroughAmr" partnerClaimType="IncomingAmrClaim"/>
+          </InputClaims>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="UserHasMfaClaimFromUpstreamIdp" />
+          </OutputClaims>
+          <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
+        </TechnicalProfile>
+      </TechnicalProfiles>
+    </ClaimsProvider>
   </ClaimsProviders>
   <UserJourneys>
     <!-- jpd custom - this doesn't support social/non-local -->
@@ -112,7 +160,6 @@
         <OrchestrationStep Order="1" Type="ClaimsProviderSelection" ContentDefinitionReferenceId="api.idpselections.signup">
           <ClaimsProviderSelections>
             <ClaimsProviderSelection TargetClaimsExchangeId="jpdaCorpExchange"/>
-            <!-- <ClaimsProviderSelection ValidationClaimsExchangeId="LocalAccountSigninEmailExchange" /> -->
             <ClaimsProviderSelection TargetClaimsExchangeId="SignUpWithLogonEmailExchange" />
           </ClaimsProviderSelections>
           <ClaimsExchanges>
